@@ -1,0 +1,24 @@
+{% extends 'layout.html.twig' %}
+
+{% block left_profile_quick_info %}{% include 'default/_left_profile_quick_info.html.twig' %}{% endblock %}
+{% block left_column_footer_buttons %}{% include 'default/_left_column_footer_buttons.html.twig' %}{% endblock %}
+{% block sidebar_menu %}{% include 'default/_sidebar_menu.html.twig' %}{% endblock %}
+{% block top_navigation %}{% include 'default/__top_navigation.html.twig' %}{% endblock %}
+{% block content %}
+    <h2>Login using Wargaming account</h2>
+    <p>Using link below will redirect you to Wargaming login screen.</p>
+    {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+    {% endif %}
+
+    <ul>
+        {% for provider in valid_openid_providers %}
+            <li><a href="{{ path("fp_openid_security_check", {'openid_identifier': provider.url}) }}">{{ provider.name }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block footer %}{% include 'default/_footer.html.twig' %}{% endblock %}
+{% block javascripts %}{% include 'default/_javascripts.html.twig' %}{% endblock %}
+
+

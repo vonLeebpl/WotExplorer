@@ -1,0 +1,31 @@
+{% extends 'common/panel.html.twig' %}
+
+{% block panel_content %}
+    <p class="text-muted font-13 m-b-30">{{ panel.description }}</p>
+
+    {% if panel.data is defined %}
+
+        <table id = 'datatable' class="table table-striped">
+            <thead>
+            <tr class="headings">
+                {% for col in panel.data.table_header %}
+                    <th class="column-title">{{ col }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+
+            <tbody>
+                {% for row in panel.data.table_rows %}
+                    <tr>
+                        {% for item in row %}
+                            <td>{{ item }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <h3>Nothing to display</h3>
+    {% endif %}
+
+{% endblock %}

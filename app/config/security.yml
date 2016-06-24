@@ -1,0 +1,60 @@
+# To get started with security, check out the documentation:
+# http://symfony.com/doc/current/book/security.html
+security:
+
+    role_hierarchy:
+        ROLE_USER: [ROLE_DOWNLOAD_REPLAY, ROLE_UPLOAD_REPLAY]
+        ROLE_SOLDIER: [ROLE_USER]
+        ROLE_OFFICER: [ROLE_SOLDIER, ROLE_CREATE_BATTLE, ROLE_DELETE_BATTLE, ROLE_PAYOUT]
+        ROLE_EXECUTIVE_OFFICER: [ROLE_OFFICER, ROLE_COMMANDED]
+        ROLE_COMMANDER: [ROLE_EXECUTIVE_OFFICER, ROLE_PLAYER_PERFORMANCE]
+        ROLE_ADMIN:       [ROLE_COMMANDER]
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN]
+    # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
+    providers:
+        openid_user_manager:
+          id: app.security_user.open_id_user_manager
+
+        database:
+          entity: { class: AppBundle:Player, property: username}
+
+    firewalls:
+        # disables authentication for assets and the profiler, adapt it according to your needs
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        main:
+            pattern:    ^/
+            logout: true
+            anonymous: true
+            form_login:
+                post_only: false
+            fp_openid:
+                relying_party: app.bridge_relying_party.restricted_open_id_relying_party
+                create_user_if_not_exists: true
+                provider: openid_user_manager
+#                required_attributes:
+#                  - nickname
+#                  - account_id
+
+            logout:       true
+            anonymous:    true
+            remember_me:
+                name:   "WotExplorerCookie"
+                secret:      "%secret%"
+                lifetime: 600 # 365 days in seconds = 31536000
+                path:     /
+                domain:   ~ # Defaults to the current domain from $_SERVER
+                always_remember_me: true
+
+    access_control:
+        - { path: ^/login_openid$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/secured_area, role: IS_AUTHENTICATED_OPENID }
+            # activate different ways to authenticate
+
+            # http_basic: ~
+            # http://symfony.com/doc/current/book/security.html#a-configuring-how-your-users-will-authenticate
+
+            # form_login: ~
+            # http://symfony.com/doc/current/cookbook/security/form_login_setup.html

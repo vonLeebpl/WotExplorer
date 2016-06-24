@@ -1,0 +1,38 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/book/service_container.html
+parameters:
+#    parameter_name: value
+  app.wot_api_config.app_ids:
+    - bf50bd80740ecfaa1c587f5efc3772b9
+    - 2ccca06d783770bbd7b7c35670d3f5b9
+    - f523731f069c8df938ef6d01c66efddd
+  openid.authentication_success_listener.class:  AppBundle\Listener\AuthenticatedEventListener
+  security.authentication.provider.fp_openid.class: AppBundle\Security\Core\Authentication\Provider\OpenIdAuthenticationProvider
+
+services:
+#    service_name:
+#        class: AppBundle\Directory\ClassName
+#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+
+  openid.authentication_success_listener:
+          class:  '%openid.authentication_success_listener.class%'
+          arguments:
+              - '@doctrine.orm.entity_manager'
+          tags:
+              - { name: kernel.event_listener, event: security.authentication.success, method: onAuthenticationSuccess }
+
+  app.security_user.open_id_user_manager:
+    class: AppBundle\Security\User\OpenIdUserManager
+    arguments: ['@fp_openid.identity_manager', '@doctrine.orm.entity_manager', '%security_settings%']
+
+  app.bridge_relying_party.restricted_open_id_relying_party:
+      class: AppBundle\Bridge\RelyingParty\RestrictedOpenIdRelyingParty
+      arguments: ['@service_container']
+
+  app.util.user_manipulator:
+      class: AppBundle\Utils\UserManipulator
+      arguments: ['@app.security_user.open_id_user_manager']
+
+  app.utils.wot_manipulator:
+      class: AppBundle\Utils\WotManipulator
+      arguments: ['@doctrine.orm.entity_manager']

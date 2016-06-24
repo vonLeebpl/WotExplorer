@@ -1,0 +1,9 @@
+{% extends 'clean.html.twig' %}
+
+{% block content %}
+    <h1>Battle</h1>
+    <h2>{{ battle.clan }} vs. {{ battle.enemyClan }}</h2>
+    <h3>Played at: {{ battle.datePlayed|date('d-m-Y H:i:s') }}</h3>
+    {% include 'cwtracker/universal_form_panel.html.twig' %}
+{% endblock %}
+
