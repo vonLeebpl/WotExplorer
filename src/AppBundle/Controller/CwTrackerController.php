@@ -138,7 +138,7 @@ class CwTrackerController extends BaseController
      * @param Battle $battle
      * @return \Symfony\Component\HttpFoundation\Response
      * @Route("/battle/{battle}", name="battle", options={"expose"=true})
-     * @Security("has_role('ROLE_USER')")
+     * @Security("has_role('ROLE_UPLOAD_REPLAY')")
      */
     public function viewBattleAction(Request $request, Battle $battle)
     {
@@ -246,22 +246,21 @@ class CwTrackerController extends BaseController
 
 
     /**
-     * @param Request $request
+     *
      * @param mixed $clan
      * @return \Symfony\Component\HttpFoundation\Response
      * @Route("/list/json/{clan}", name="list_json_clan_battles")
      * @Security("has_role('ROLE_USER')")
      */
-    public function listClanBattlesJsonAction(Request $request, $clan)
+    public function listClanBattlesJsonAction($clan)
     {
-        $clanTag = $this->getClanTag($clan);
-        $datatable = $this->buildDatatable($clanTag);
+        $datatable = $this->buildDatatable($clan);
 
         $query = $this->get('sg_datatables.query')->getQueryFrom($datatable);
         $query->buildQuery();
 
         $qb = $query->getQuery();
-        $qb->andWhere("battle.clan = '".$clanTag."'");
+        $qb->andWhere("battle.clan = '".$clan."'");
 
         $query->setQuery($qb);
 
@@ -269,13 +268,13 @@ class CwTrackerController extends BaseController
     }
 
     /**
-     * @param mixed $clan
+     * @param string|integer $clan
      * @return \AppBundle\Datatables\BattleDatatable
      */
-    private function buildDatatable($clan)
+    private function buildDatatable(&$clan)
     {
-        $clanTag = $this->getClanTag($clan);
-        $ajaxUrl = $this->generateUrl('list_json_clan_battles', ['clan' => $clanTag]);
+        $clan = $this->getClanTag($clan);
+        $ajaxUrl = $this->generateUrl('list_json_clan_battles', ['clan' => $clan]);
 
         $datatable = $this->get('app.datatables.battle_datatable');
         $datatable->buildDatatable(['ajaxUrl' => $ajaxUrl]);

@@ -124,6 +124,11 @@ class Player implements AdvancedUserInterface, \Serializable
      */
     protected $resourcesToPayout;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $isHqMember;
+
     public function __construct()
     {
         $this->enabled = false;
@@ -132,6 +137,7 @@ class Player implements AdvancedUserInterface, \Serializable
         $this->totalResourcesEarned = 0;
         $this->lastPayoutResources = 0;
         $this->resourcesToPayout = 0;
+        $this->isHqMember = false;
         
         $this->battleAttendances = new ArrayCollection();
         $this->cwReplays = new ArrayCollection();
@@ -768,7 +774,7 @@ class Player implements AdvancedUserInterface, \Serializable
      *
      * @return Player
      */
-    public function setResourcesToPayout($resourcesToPayout)
+    private function setResourcesToPayout($resourcesToPayout)
     {
         $this->resourcesToPayout = $resourcesToPayout;
 
@@ -783,5 +789,29 @@ class Player implements AdvancedUserInterface, \Serializable
     public function getResourcesToPayout()
     {
         return $this->resourcesToPayout;
+    }
+
+    /**
+     * Set isHqMember
+     *
+     * @param boolean $isHqMember
+     *
+     * @return Player
+     */
+    public function setIsHqMember($isHqMember)
+    {
+        $this->isHqMember = $isHqMember;
+
+        return $this;
+    }
+
+    /**
+     * Get isHqMember
+     *
+     * @return boolean
+     */
+    public function getIsHqMember()
+    {
+        return $this->isHqMember;
     }
 }

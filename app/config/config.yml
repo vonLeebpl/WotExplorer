@@ -15,10 +15,16 @@ parameters:
             - 'PSQD'
             - 'PSQDX'
         roles_matrix:
-            'ROLE_SOLDIER': ['recruit', 'private', 'reservist', 'junior_officer', 'personnel_officer', 'combat_officer', 'recruitment_officer', 'intelligence_officer']
-            'ROLE_OFFICER': ['quartermaster']
+            'ROLE_SOLDIER': ['recruit', 'private', 'reservist']
+            'ROLE_JUNIOR_OFFICER': ['junior_officer']
+            'ROLE_PERSONNEL_OFFICER': ['personnel_officer']
+            'ROLE_RECRUITMENT_OFFICER': ['recruitment_officer']
+            'ROLE_COMBAT_OFFICER': ['combat_officer']
+            'ROLE_INTELLIGENCE_OFFICER': ['intelligence_officer']
+            'ROLE_QUARTERMASTER': ['quartermaster']
             'ROLE_EXECUTIVE_OFFICER': ['executive_officer']
             'ROLE_COMMANDER': ['commander']
+        hq_member_roles: ['junior_officer', 'personnel_officer', 'combat_officer', 'recruitment_officer', 'intelligence_officer', 'quartermaster', 'executive_officer', 'commander']
         super_admins:
             - 'vonLeeb_pl'
     valid_openid_providers:

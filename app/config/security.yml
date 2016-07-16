@@ -5,8 +5,14 @@ security:
     role_hierarchy:
         ROLE_USER: [ROLE_DOWNLOAD_REPLAY, ROLE_UPLOAD_REPLAY]
         ROLE_SOLDIER: [ROLE_USER]
-        ROLE_OFFICER: [ROLE_SOLDIER, ROLE_CREATE_BATTLE, ROLE_DELETE_BATTLE, ROLE_PAYOUT]
-        ROLE_EXECUTIVE_OFFICER: [ROLE_OFFICER, ROLE_COMMANDED]
+        ROLE_HQ_MEMBER: [ROLE_SOLDIER]
+        ROLE_JUNIOR_OFFICER: [ROLE_HQ_MEMBER]
+        ROLE_PERSONNEL_OFFICER: [ROLE_HQ_MEMBER]
+        ROLE_RECRUITMENT_OFFICER: [ROLE_HQ_MEMBER]
+        ROLE_INTELLIGENCE_OFFICER: [ROLE_HQ_MEMBER]
+        ROLE_COMBAT_OFFICER: [ROLE_HQ_MEMBER]
+        ROLE_QUARTERMASTER: [ROLE_HQ_MEMBER, ROLE_CREATE_BATTLE, ROLE_DELETE_BATTLE, ROLE_CREATE_PAYOUT]
+        ROLE_EXECUTIVE_OFFICER: [ROLE_QUARTERMASTER, ROLE_COMMANDED]
         ROLE_COMMANDER: [ROLE_EXECUTIVE_OFFICER, ROLE_PLAYER_PERFORMANCE]
         ROLE_ADMIN:       [ROLE_COMMANDER]
         ROLE_SUPER_ADMIN: [ROLE_ADMIN]
@@ -34,9 +40,6 @@ security:
                 relying_party: app.bridge_relying_party.restricted_open_id_relying_party
                 create_user_if_not_exists: true
                 provider: openid_user_manager
-#                required_attributes:
-#                  - nickname
-#                  - account_id
 
             logout:       true
             anonymous:    true

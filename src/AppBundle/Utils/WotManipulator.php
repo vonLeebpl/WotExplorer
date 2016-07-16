@@ -246,7 +246,7 @@ class WotManipulator
     {
         $clanMembers = $clan->getMembers();
         $emblem = $clan->getEmblems()['x64']['portal'];
-        //$refreshedMembers = $this->wrapper->getClanMemberDetails($clanMemberIds);
+
         foreach ($clanMembers as $clanMember)
         {
             if(null === $player = $this->entityManager->getRepository('AppBundle:Player')->findOneByAccountId($clanMember['account_id']))
@@ -260,13 +260,21 @@ class WotManipulator
             $player->setEmblem($emblem);
             $player->setPosition($clanMember['role_i18n']);
 
+            //clean previous roles
             $player->setRoles(array());
 
-             foreach ($this->wot_manipulator['security_settings']['roles_matrix'] as $key => $value){
+            //set new roles 
+            foreach ($this->wot_manipulator['security_settings']['roles_matrix'] as $key => $value)
+             {
                 if (in_array($clanMember['role'], $value) ){
                     $player->addRole($key);
                 }
             }
+            if (in_array($clanMember['role'], $this->wot_manipulator['security_settings']['hq_member_roles']))
+                $player->setIsHqMember(true);
+            else
+                $player->setIsHqMember(false);
+
             if (in_array($clanMember['account_name'], $this->wot_manipulator['security_settings']['super_admins'])) {
                 $player->setSuperAdmin(true);
             }
@@ -299,8 +307,8 @@ class WotManipulator
     public function refreshClanStrongholdStats(Clan $clan)
     {
         $clanMembersIds = $clan->getMembersIds();
-
         $shStats = $this->wrapper->getPlayerStrongholdStats($clanMembersIds);
+        
         foreach ($shStats as $stat)
         {
             /**
