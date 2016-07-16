@@ -26,6 +26,7 @@ class ReplayType extends AbstractType
         $builder
             ->add('replayFile', VichFileType::class, array(
                 'required'      => true,
+                'download_link' => false,
                       ))
             ->add('Upload', SubmitType::class)
         ;

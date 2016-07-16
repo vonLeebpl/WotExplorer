@@ -13,7 +13,7 @@ use Doctrine\ORM\EntityRepository;
  */
 class ClanRepository extends EntityRepository
 {
-    public function getClanFromArray($data)
+/*    public function getClanFromArray($data)
     {
         $clan = new Clan();
 
@@ -25,5 +25,5 @@ class ClanRepository extends EntityRepository
         //$clan->setLastEventUpdateDate(new \DateTime('now'));
 
         return $clan;
-    }
+    }*/
 }

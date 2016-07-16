@@ -16,7 +16,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
- * Battle
+ * Player used as user for User Provider
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="AppBundle\Repository\PlayerRepository")
@@ -45,8 +45,8 @@ class Player implements AdvancedUserInterface, \Serializable
     private $cwReplays;
 
     /**
-     * @var integer
-     * @ORM\Column(type="integer")
+     * @var integer WOT AccountId
+     * @ORM\Column(type="integer", unique=true)
      */
     private $accountId;
 
@@ -57,7 +57,7 @@ class Player implements AdvancedUserInterface, \Serializable
     private $clan;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", unique=true)
      */
     protected $username;
 
@@ -104,11 +104,34 @@ class Player implements AdvancedUserInterface, \Serializable
      */
     protected $createdAt;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $totalResourcesEarned;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $weekResourcesEarned;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $lastPayoutResources;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $resourcesToPayout;
+
     public function __construct()
     {
         $this->enabled = false;
         $this->locked = false;
         $this->roles = array();
+        $this->totalResourcesEarned = 0;
+        $this->lastPayoutResources = 0;
+        $this->resourcesToPayout = 0;
         
         $this->battleAttendances = new ArrayCollection();
         $this->cwReplays = new ArrayCollection();
@@ -252,11 +275,14 @@ class Player implements AdvancedUserInterface, \Serializable
      * Sets the locking status of the user.
      *
      * @param Boolean $lock
-     * @return void|static
+     *
+     * @return $this
      */
     public function setLocked( $lock )
     {
         $this->locked = $lock;
+
+        return $this;
     }
     /**
      * Get lastLogin
@@ -272,11 +298,13 @@ class Player implements AdvancedUserInterface, \Serializable
      * Sets the last login time
      *
      * @param \DateTime $time
-     * @return void|static
+     * @return $this
      */
     public function setLastLogin( \DateTime $time = NULL )
     {
         $this->lastLogin = $time;
+
+        return $this;
     }
     /**
      * Tells if the the given user has the super admin role.
@@ -292,7 +320,7 @@ class Player implements AdvancedUserInterface, \Serializable
      * Sets the super admin status
      *
      * @param Boolean $setSuperAdmin
-     * @return void|static
+     * @return $this
      */
     public function setSuperAdmin( $setSuperAdmin )
     {
@@ -304,6 +332,8 @@ class Player implements AdvancedUserInterface, \Serializable
         {
             $this->removeRole( 'ROLE_SUPER_ADMIN' );
         }
+
+        return $this;
     }
     /**
      * Never use this to check if this user has access to anything!
@@ -328,11 +358,13 @@ class Player implements AdvancedUserInterface, \Serializable
      * This overwrites any previous roles.
      *
      * @param array $roles
-     * @return void|static
+     * @return $this
      */
     public function setRoles( array $roles )
     {
         $this->roles = $roles;
+
+        return $this;
     }
 
     /**
@@ -653,5 +685,103 @@ class Player implements AdvancedUserInterface, \Serializable
     public function getPosition()
     {
         return $this->position;
+    }
+
+    /**
+     * Set totalResourcesEarned
+     *
+     * @param integer $totalResourcesEarned
+     *
+     * @return Player
+     */
+    public function setTotalResourcesEarned($totalResourcesEarned)
+    {
+        $this->totalResourcesEarned = $totalResourcesEarned;
+        $this->resourcesToPayout = $totalResourcesEarned - $this->lastPayoutResources;
+
+        return $this;
+    }
+
+    /**
+     * Get totalResourcesEarned
+     *
+     * @return integer
+     */
+    public function getTotalResourcesEarned()
+    {
+        return $this->totalResourcesEarned;
+    }
+
+    /**
+     * Set weekResourcesEarned
+     *
+     * @param integer $weekResourcesEarned
+     *
+     * @return Player
+     */
+    public function setWeekResourcesEarned($weekResourcesEarned)
+    {
+        $this->weekResourcesEarned = $weekResourcesEarned;
+
+        return $this;
+    }
+
+    /**
+     * Get weekResourcesEarned
+     *
+     * @return integer
+     */
+    public function getWeekResourcesEarned()
+    {
+        return $this->weekResourcesEarned;
+    }
+
+    /**
+     * Set lastPayoutResources
+     *
+     * @param integer $lastPayoutResources
+     *
+     * @return Player
+     */
+    public function setLastPayoutResources($lastPayoutResources)
+    {
+        $this->lastPayoutResources = $lastPayoutResources;
+        $this->resourcesToPayout = $this->totalResourcesEarned - $lastPayoutResources;
+
+        return $this;
+    }
+
+    /**
+     * Get lastPayoutResources
+     *
+     * @return integer
+     */
+    public function getLastPayoutResources()
+    {
+        return $this->lastPayoutResources;
+    }
+
+    /**
+     * Set resourcesToPayout
+     *
+     * @param integer $resourcesToPayout
+     *
+     * @return Player
+     */
+    public function setResourcesToPayout($resourcesToPayout)
+    {
+        $this->resourcesToPayout = $resourcesToPayout;
+
+        return $this;
+    }
+
+    /**
+     * Get resourcesToPayout
+     *
+     * @return integer
+     */
+    public function getResourcesToPayout()
+    {
+        return $this->resourcesToPayout;
     }
 }

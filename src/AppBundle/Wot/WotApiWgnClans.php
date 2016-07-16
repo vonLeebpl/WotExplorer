@@ -51,22 +51,17 @@ class WotApiWgnClans extends WotApiCall
 
     /**
      * @param $call_params array may include
-     * fields 	string, array
-     * Response field. The fields are separated with commas. Embedded fields are separated with dots. To exclude a field, use “-” in front of its name. In case the parameter is not defined, the method returns all fields.
+     * fields 	string, list Response field. The fields are separated with commas. Embedded fields are separated with dots. To exclude a field, use “-” in front of its name. In case the parameter is not defined, the method returns all fields.
      *
-     * access_token 	string
-     * Access token is used to access personal user data. The token is obtained via authentication and has expiration time.
+     * access_token string  Access token is used to access personal user data. The token is obtained via authentication and has expiration time.
      *
-     * extra 	string, list
-     * Extra fields to be included into the response. Valid values:
+     * extra 	string, list Extra fields to be included into the response. Valid values:
+     *      private.online_members
      *
-     * private.online_members
-     * *clan_id 	numeric, list, required
-     * Clan ID
+     * clan_id 	numeric, list, required Clan ID
      *
-     * members_key 	string
-     * This parameter changes members field type. Valid values:
-     *  "id" — Members field will contain associative array with account_id indexing in response
+     * members_key 	string This parameter changes members field type. Valid values:
+     *      "id" — Members field will contain associative array with account_id indexing in response
      *
      * @link http://eu.wargaming.net/developers/api_reference/wgn/clans/info/
      * @return array

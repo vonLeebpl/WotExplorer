@@ -1,0 +1,83 @@
+{% extends 'clean.html.twig' %}
+
+{% block content %}
+    <h1>{% if battle.stronghold %}Stronghold {% else %}Global map {% endif %}
+        battle
+        {% if battle.result == 1 %}
+            <span style="color: #00AA00"><i class="fa fa-check-square fa-1x"></i> Win</span>
+        {% elseif battle.result == -1 %}
+            <span style="color: red"><i class="fa fa-minus-square fa-1x"></i> Lost</span>
+        {% else %}
+            <span style="color: orangered"><i class="fa fa-dot-circle-o fa-1x"></i> Draw</span>
+        {% endif %}
+    </h1>
+    <h2>{{ battle.clan }} vs. {{ battle.enemyClan }} ( {{ battle.score }} )</h2>
+    <h3>Played at: {{ battle.datePlayed|date('d-m-Y H:i:s') }} <sp> | <small>map: </small><strong>{{ battle.mapname }}</strong></sp>
+        <sp> | <small>commander: </small><strong>{{ battle.commander.username }}</strong></sp>
+        <sp><a class="btn btn-default" href="{{ path('commander_for_battle', {'battle': battle.id}) }}" role="button"><i class="glyphicon glyphicon-pencil"></i> Change</a></sp>
+    </h3>
+    <div class="row">
+        <div class="col-md-5">
+            <h2>{{ battle.clan }}</h2>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Player</th>
+                    <th>Tank</th>
+                    <th>XP</th>
+                    <th>Dmg</th>
+                    <th>Frags</th>
+                    <th>SH Res</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for att in battle.battleAttendances %}
+                    <tr {% if not att.isAlive %} class="danger" {% endif %} >
+                        <td>{% if att.player.id in battle.getBattleReplayPlayerIds %}
+                                <a href="{{ vich_uploader_asset(battle.getPlayerReplay(att.player), 'replayFile') }}">{{ att.player.username }} <i class="fa fa-download" alt="Download replay."></i></a>
+                            {% else %}
+                                {{ att.player.username }}
+                            {% endif %}</td>
+                        <td>{{ att.tankShortName }}</td>
+                        <td>{{ att.orygXP }}</td>
+                        <td>{{ att.damage }}</td>
+                        <td>{{ att.frags }}</td>
+                        <td>{{ att.resourceAbsorbed }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-4">
+            <h2>{{ battle.enemyClan }}</h2>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Player</th>
+                    <th>Tank</th>
+                    <th>XP</th>
+                    <th>Dmg</th>
+                    <th>Frags</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for att in battle.battleEnemyAttendances %}
+                    <tr {% if not att.isAlive %} class="danger" {% endif %} >
+                        <td>{{ att.name }}</td>
+                        <td>{{ att.tankShortName }}</td>
+                        <td>{{ att.orygXP }}</td>
+                        <td>{{ att.damage }}</td>
+                        <td>{{ att.frags }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% include 'common/universal_form_panel.html.twig' %}
+    <div>
+        <a class="btn btn-success" href="{{ path('new_battle_from_replay') }}" role="button"><i class="glyphicon glyphicon-plus"></i> New battle from replay</a>
+        <a class="btn btn-primary" href="{{ path('list_clan_battles', {'clan': battle.clan}) }}" role="button"><i class="glyphicon glyphicon-list"></i> Clan battles list</a>
+    </div>
+{% endblock %}
+

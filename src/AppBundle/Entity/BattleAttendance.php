@@ -42,6 +42,11 @@ class BattleAttendance
     private $player;
 
     /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isAlive;
+
+    /**
      * @var integer
      * @ORM\Column(type="integer", options={"default":0})
      */
@@ -52,6 +57,26 @@ class BattleAttendance
      * @ORM\Column(type="integer", options={"default":0})
      */
     private $damage;
+
+    /**
+     * @ORM\Column(type="smallint")
+     */
+    private $frags = 0;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $tankId;
+
+    /**
+     * @ORM\Column(type="string", length=25)
+     */
+    private $tankShortName;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $resourceAbsorbed = 0;
 
     /**
      * Get id
@@ -118,7 +143,7 @@ class BattleAttendance
      *
      * @return BattleAttendance
      */
-    public function setBattle(\AppBundle\Entity\Battle $battle = null)
+    public function setBattle(Battle $battle = null)
     {
         $this->battle = $battle;
 
@@ -142,7 +167,7 @@ class BattleAttendance
      *
      * @return BattleAttendance
      */
-    public function setPlayer(\AppBundle\Entity\Player $player = null)
+    public function setPlayer(Player $player = null)
     {
         $this->player = $player;
 
@@ -157,5 +182,125 @@ class BattleAttendance
     public function getPlayer()
     {
         return $this->player;
+    }
+
+    /**
+     * Set resourceAbsorbed
+     *
+     * @param integer $resourceAbsorbed
+     *
+     * @return BattleAttendance
+     */
+    public function setResourceAbsorbed($resourceAbsorbed)
+    {
+        $this->resourceAbsorbed = $resourceAbsorbed;
+
+        return $this;
+    }
+
+    /**
+     * Get resourceAbsorbed
+     *
+     * @return integer
+     */
+    public function getResourceAbsorbed()
+    {
+        return $this->resourceAbsorbed;
+    }
+
+    /**
+     * Set tankId
+     *
+     * @param integer $tankId
+     *
+     * @return BattleAttendance
+     */
+    public function setTankId($tankId)
+    {
+        $this->tankId = $tankId;
+
+        return $this;
+    }
+
+    /**
+     * Get tankId
+     *
+     * @return integer
+     */
+    public function getTankId()
+    {
+        return $this->tankId;
+    }
+
+    /**
+     * Set tankShortName
+     *
+     * @param string $tankShortName
+     *
+     * @return BattleAttendance
+     */
+    public function setTankShortName($tankShortName)
+    {
+        $this->tankShortName = $tankShortName;
+
+        return $this;
+    }
+
+    /**
+     * Get tankShortName
+     *
+     * @return string
+     */
+    public function getTankShortName()
+    {
+        return $this->tankShortName;
+    }
+
+    /**
+     * Set frags
+     *
+     * @param integer $frags
+     *
+     * @return BattleAttendance
+     */
+    public function setFrags($frags)
+    {
+        $this->frags = $frags;
+
+        return $this;
+    }
+
+    /**
+     * Get frags
+     *
+     * @return integer
+     */
+    public function getFrags()
+    {
+        return $this->frags;
+    }
+
+    /**
+     * Set isAlive
+     *
+     * @param boolean $isAlive
+     *
+     * @return BattleAttendance
+     */
+    public function setIsAlive($isAlive)
+    {
+        $this->isAlive = $isAlive;
+
+        return $this;
+    }
+
+    /**
+     * Get isAlive
+     *
+     * @return boolean
+     */
+    public function getIsAlive()
+    {
+        return $this->isAlive;
     }
 }

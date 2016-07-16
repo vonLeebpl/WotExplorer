@@ -1,0 +1,16 @@
+{% extends 'clean.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {% include ':default:_dataTable_stylesheet_full.html.twig' %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% include ':default:_dataTable_javascript_full.html.twig' %}
+{% endblock %}
+
+{% block content %}
+    {{ datatable_render(datatable) }}
+{% endblock %}
+

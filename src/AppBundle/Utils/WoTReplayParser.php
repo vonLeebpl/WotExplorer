@@ -1,10 +1,13 @@
 <?php
+/**
+ * Copyright (c) 2016. by vonLeeb_pl@PSQD, MIT License
+ */
 
-namespace AppBundle\Wot;
+namespace AppBundle\Utils;
 
 use Zend\Serializer\Adapter\PythonPickle;
 
-class WoTReplayParser {
+class WotReplayParser {
 
     private $result = array();
     private $fp;
@@ -292,8 +295,12 @@ class WoTReplayParser {
                 return 'Clan War Battle';
             case 6:
                 return 'Tutorial Battle';
+            case 10:
+                return 'Skirmish Battle';
+            case 11:
+                return 'Stronghold Battle';
             case 13:
-                return 'Event Battle';
+                return 'Global Map Battle';
             default:
                 return 'Unknown Battle';
         }

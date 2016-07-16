@@ -8,6 +8,6 @@ class BaseController extends Controller
 {
     public function getEntityManager()
     {
-        return $this->getDoctrine()->getEntityManager();
+        return $this->getDoctrine()->getManager();
     }
 }

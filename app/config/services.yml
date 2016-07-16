@@ -35,4 +35,8 @@ services:
 
   app.utils.wot_manipulator:
       class: AppBundle\Utils\WotManipulator
-      arguments: ['@doctrine.orm.entity_manager']
+      arguments: ['@doctrine.orm.entity_manager', '%wot_manipulator%']
+
+  app.datatables.battle_datatable:
+    class: AppBundle\Datatables\BattleDatatable
+    parent: sg_datatables.datatable.abstract

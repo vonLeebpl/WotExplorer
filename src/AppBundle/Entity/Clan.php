@@ -8,6 +8,9 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Hydrator\DoctrineObject;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -27,9 +30,14 @@ class Clan
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
-     *
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+
+    /**
+     * @ORM\Column(name="clan_id", type="integer", unique=true)
+     */
+    private $clanId;
 
     /**
      * @ORM\Column(type="boolean", name="accepts_join_requests")
@@ -143,7 +151,7 @@ class Clan
      * @ORM\Column(type="datetime", name="last_refreshed", nullable= true)
      * @Assert\DateTime()
      */
-    private $lastRefreshed;
+    private $lastRefreshedAt;
 
     /**
      * @ORM\Column(type="datetime", name="last_event_update", nullable= true)
@@ -157,7 +165,7 @@ class Clan
      */
     public function __construct()
     {
-        $this->event_accounts_info = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->event_accounts_info = new ArrayCollection();
     }
 
     /**
@@ -258,9 +266,9 @@ class Clan
      * @param \DateTime $lastRefreshed
      * @return Clan
      */
-    public function setLastRefreshed(\DateTime $lastRefreshed)
+    public function setLastRefreshedAt(\DateTime $lastRefreshed)
     {
-        $this->lastRefreshed = $lastRefreshed;
+        $this->lastRefreshedAt = $lastRefreshed;
 
         return $this;
     }
@@ -270,9 +278,9 @@ class Clan
      *
      * @return \DateTime 
      */
-    public function getLastRefreshed()
+    public function getLastRefreshedAt()
     {
-        return $this->lastRefreshed;
+        return $this->lastRefreshedAt;
     }
 
     /**
@@ -304,7 +312,7 @@ class Clan
      * @param \AppBundle\Entity\EventAccountData $members
      * @return Clan
      */
-    public function addMember(\AppBundle\Entity\EventAccountData $members)
+    public function addMember(EventAccountData $members)
     {
         $this->event_accounts_info[] = $members;
 
@@ -316,7 +324,7 @@ class Clan
      *
      * @param \AppBundle\Entity\EventAccountData $members
      */
-    public function removeMember(\AppBundle\Entity\EventAccountData $members)
+    public function removeMember(EventAccountData $members)
     {
         $this->event_accounts_info->removeElement($members);
     }
@@ -751,7 +759,7 @@ class Clan
      * @param \AppBundle\Entity\EventAccountData $eventAccountsInfo
      * @return Clan
      */
-    public function addEventAccountsInfo(\AppBundle\Entity\EventAccountData $eventAccountsInfo)
+    public function addEventAccountsInfo(EventAccountData $eventAccountsInfo)
     {
         $this->event_accounts_info[] = $eventAccountsInfo;
 
@@ -763,7 +771,7 @@ class Clan
      *
      * @param \AppBundle\Entity\EventAccountData $eventAccountsInfo
      */
-    public function removeEventAccountsInfo(\AppBundle\Entity\EventAccountData $eventAccountsInfo)
+    public function removeEventAccountsInfo(EventAccountData $eventAccountsInfo)
     {
         $this->event_accounts_info->removeElement($eventAccountsInfo);
     }
@@ -782,5 +790,37 @@ class Clan
             $arr[] = $member['account_id'];
         }
         $this->setMembersIds($arr);
+    }
+
+    public function hydrateFromArray(array $data, ObjectManager $objectManager)
+    {
+        $hydrator = new DoctrineObject($objectManager);
+        $hydrator->hydrate($data, $this);
+        
+        return $this;
+    }
+
+    /**
+     * Set clanId
+     *
+     * @param integer $clanId
+     *
+     * @return Clan
+     */
+    public function setClanId($clanId)
+    {
+        $this->clanId = $clanId;
+
+        return $this;
+    }
+
+    /**
+     * Get clanId
+     *
+     * @return integer
+     */
+    public function getClanId()
+    {
+        return $this->clanId;
     }
 }

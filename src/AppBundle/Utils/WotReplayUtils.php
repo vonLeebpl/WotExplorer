@@ -13,7 +13,7 @@ class WotReplayUtils
 {
     /**
      * @param array $result
-     * @return int
+     * @return int 0 = draw, 1 = win, -1 = lost
      */
     public static function guessBattleResult(array &$result)
     {
@@ -28,6 +28,18 @@ class WotReplayUtils
         }
 
         return -1;
+    }
+
+    /**
+     * @param array &$result
+     * @return boolean
+     */
+    public static function guessBattleStronghold( array &$result )
+    {
+        if (in_array($result['battle']['battleType'], [10, 11]))
+            return true;
+        else
+            return false;
     }
 
     /**
@@ -46,14 +58,19 @@ class WotReplayUtils
         return 'UNKNOWN';
     }
 
+    /**
+     * @param array $result
+     * @return string
+     */
     public static function guessBattleEnemyClan(array &$result)
     {
         $clan = self::guessBattleClan($result);
+        $player_team = $result['player']['team'];
         if ($clan != 'UNKNOWN')
         {
             foreach ($result['players'] as $player)
             {
-                if ($player['clanAbbrev'] != $clan)
+                if ($player['clanAbbrev'] != $clan and $player['team'] != $player_team)
                     return $player['clanAbbrev'];
             }
         }
@@ -61,17 +78,39 @@ class WotReplayUtils
         return 'UNKNOWN';
     }
 
+    /**
+     * @param array $result
+     * @return array ['name' => 'account_id']
+     */
     public static function getClanPlayersFromBattleResult(array $result)
     {
-        $clan = self::guessBattleClan($result);
+        $player_team = $result['player']['team'];
         $ret = [];
-        if ($clan != 'UNKNOWN') {
-            foreach ($result['players'] as $player)
-            {
-                if ($player['clanAbbrev'] == $clan)
-                    $ret[] = $player['name'];
-            }
+
+        foreach ($result['players'] as $key => $player)
+        {
+            if ($player['team'] == $player_team)
+                $ret[$player['name']] = $key;
         }
+
+        return $ret;
+    }
+
+    /**
+     * @param array $result
+     * @return array
+     */
+    public static function getEnemyClanPlayersFromBattleResult(array $result)
+    {
+        $player_team = $result['player']['team'];
+        $ret = [];
+
+        foreach ($result['players'] as $key => $player)
+        {
+            if ($player['team'] != $player_team)
+                $ret[$player['name']] = $key;
+        }
+
         return $ret;
     }
 }

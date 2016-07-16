@@ -84,7 +84,7 @@ class Replay
     }
 
     /**
-     * @return string
+     * @return Player
      */
     public function getPlayer()
     {
@@ -132,9 +132,10 @@ class Replay
      *
      * @return $this
      */
-    public function setPlayer($player)
+    public function setPlayer(Player $player)
     {
         $this->player = $player;
+        $this->playerName = $player->getUsername();
 
         return $this;
     }
@@ -193,6 +194,8 @@ class Replay
 
     /**
      * @Assert\Callback
+     * @param ExecutionContextInterface $context
+     * @param $payload
      */
     public function validate(ExecutionContextInterface $context, $payload)
     {

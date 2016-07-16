@@ -4,3 +4,10 @@ app:
 
 fp_openid_security:
     resource: "@FpOpenIdBundle/Resources/config/routing/security.xml"
+
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
+
+sg_datatables_bundle:
+    resource: "@SgDatatablesBundle/Controller/"
+    type:     annotation

@@ -45,7 +45,14 @@ class Battle
     private $battleAttendances;
 
     /**
-     * @var Array
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\BattleEnemyAttendance", mappedBy="battle", cascade={"remove"})
+     */
+    private $battleEnemyAttendances;
+
+    /**
+     * @var array
      * @ORM\Column(type="json_array")
      */
     private $dataArray;
@@ -58,9 +65,16 @@ class Battle
 
     /**
      * @var int
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\ManyToOne(targetEntity="Player")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=true, )
      */
-    private $commanderId;
+    private $commander;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $commanderName;
 
     /**
      * @var int
@@ -70,7 +84,7 @@ class Battle
 
     /**
      * @var string
-     * @ORM\Column(type="string", nullable=true, length=80)
+     * @ORM\Column(type="string", nullable=true, length=40)
      */
     private $mapId;
 
@@ -81,7 +95,13 @@ class Battle
     private $mapName;
 
     /**
-     * @var DateTime
+     * @var string
+     * @ORM\Column(type="string", nullable=true, length=5)
+     */
+    private $score;
+
+    /**
+     * @var \DateTime
      * @ORM\Column(type="datetime")
      */
     private $datePlayed;
@@ -108,10 +128,16 @@ class Battle
      * @var boolean
      * @ORM\Column(type="boolean", options={"default":0})
      */
-    private $stronghold = 0;
+    private $stronghold = false;
 
     /**
-     * @var DateTime
+     * @var boolean
+     * @ORM\Column(type="boolean")
+     */
+    private $isGoldPayed = false;
+
+    /**
+     * @var \DateTime
      * @ORM\Column(type="datetime")
      */
     private $createdAt;
@@ -120,6 +146,7 @@ class Battle
     {
         $this->replays = new ArrayCollection();
         $this->battleAttendances = new ArrayCollection();
+        $this->battleEnemyAttendances = new ArrayCollection();
     }
 
     /**
@@ -163,7 +190,7 @@ class Battle
      *
      * @return Battle
      */
-    public function addReplay(\AppBundle\Entity\Replay $replay)
+    public function addReplay(Replay $replay)
     {
         $this->replays[] = $replay;
 
@@ -175,7 +202,7 @@ class Battle
      *
      * @param \AppBundle\Entity\Replay $replay
      */
-    public function removeReplay(\AppBundle\Entity\Replay $replay)
+    public function removeReplay(Replay $replay)
     {
         $this->replays->removeElement($replay);
     }
@@ -217,13 +244,14 @@ class Battle
     /**
      * Set commanderId
      *
-     * @param integer $commanderId
+     * @param Player $commander
      *
      * @return Battle
      */
-    public function setCommanderId($commanderId)
+    public function setCommander(Player $commander = null)
     {
-        $this->commanderId = $commanderId;
+        $this->commander = $commander;
+        $this->commanderName = $commander->getUsername();
 
         return $this;
     }
@@ -231,11 +259,11 @@ class Battle
     /**
      * Get commanderId
      *
-     * @return integer
+     * @return Player
      */
-    public function getCommanderId()
+    public function getCommander()
     {
-        return $this->commanderId;
+        return $this->commander;
     }
 
     /**
@@ -461,7 +489,7 @@ class Battle
      *
      * @return Battle
      */
-    public function addBattleAttendance(\AppBundle\Entity\BattleAttendance $battleAttendance)
+    public function addBattleAttendance(BattleAttendance $battleAttendance)
     {
         $this->battleAttendances[] = $battleAttendance;
 
@@ -473,7 +501,7 @@ class Battle
      *
      * @param \AppBundle\Entity\BattleAttendance $battleAttendance
      */
-    public function removeBattleAttendance(\AppBundle\Entity\BattleAttendance $battleAttendance)
+    public function removeBattleAttendance(BattleAttendance $battleAttendance)
     {
         $this->battleAttendances->removeElement($battleAttendance);
     }
@@ -486,5 +514,144 @@ class Battle
     public function getBattleAttendances()
     {
         return $this->battleAttendances;
+    }
+
+    /**
+     * @return array
+     */
+    public function getBattleAttendancesPlayerIds()
+    {
+        $ret = [];
+        foreach ($this->getBattleAttendances() as $att)
+        {
+            $ret[] = $att->getPlayer()->getId();
+        }
+
+        return $ret;
+    }
+
+    /**
+     * @return array
+     */
+    public function getBattleReplayPlayerIds()
+    {
+        $ret = [];
+        foreach ($this->getReplays() as $rep)
+        {
+            $ret[] = $rep->getPlayer()->getId();
+        }
+
+        return $ret;
+    }
+
+    /**
+     * Add battleEnemyAttendance
+     *
+     * @param \AppBundle\Entity\BattleEnemyAttendance $battleEnemyAttendance
+     *
+     * @return Battle
+     */
+    public function addBattleEnemyAttendance(BattleEnemyAttendance $battleEnemyAttendance)
+    {
+        $this->battleEnemyAttendances[] = $battleEnemyAttendance;
+
+        return $this;
+    }
+
+    /**
+     * Remove battleEnemyAttendance
+     *
+     * @param \AppBundle\Entity\BattleEnemyAttendance $battleEnemyAttendance
+     */
+    public function removeBattleEnemyAttendance(BattleEnemyAttendance $battleEnemyAttendance)
+    {
+        $this->battleEnemyAttendances->removeElement($battleEnemyAttendance);
+    }
+
+    /**
+     * Get battleEnemyAttendances
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getBattleEnemyAttendances()
+    {
+        return $this->battleEnemyAttendances;
+    }
+
+    /**
+     * Set isGoldPayed
+     *
+     * @param boolean $isGoldPayed
+     *
+     * @return Battle
+     */
+    public function setIsGoldPayed($isGoldPayed)
+    {
+        $this->isGoldPayed = $isGoldPayed;
+
+        return $this;
+    }
+
+    /**
+     * Get isGoldPayed
+     *
+     * @return boolean
+     */
+    public function getIsGoldPayed()
+    {
+        return $this->isGoldPayed;
+    }
+
+    /**
+     * @param Player $player
+     * @return Replay|null
+     */
+    public function getPlayerReplay(Player $player)
+    {
+        foreach ($this->getReplays() as $replay)
+        {
+            if ($replay->getPlayer()->getId() == $player->getId())
+                return $replay;
+        }
+        return null;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCommanderName()
+    {
+        return $this->commanderName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getScore()
+    {
+        return $this->score;
+    }
+
+    /**
+     * @param string $score
+     */
+    public function setScore($score)
+    {
+        $this->score = $score;
+    }
+
+
+    /**
+     * Set commanderName
+     *
+     * @param string $commanderName
+     *
+     * @return Battle
+     */
+    public function setCommanderName($commanderName)
+    {
+        $this->commanderName = $commanderName;
+
+        return $this;
     }
 }

@@ -13,11 +13,12 @@ class DefaultController extends Controller
     /**
      * @Route("/", name="homepage")
      */
-    public function indexAction(Request $request)
+    public function indexAction()
     {
-
+        $authorised_clans = implode(', ', $this->container->getParameter('security_settings')['authorised_clans']);
         return $this->render('default/index.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..'),
+            'authorised_clans' => $authorised_clans,
         ]);
     }
 

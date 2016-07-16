@@ -1,1 +1,11 @@
 {% extends 'clean.html.twig' %}
+{% block content %}
+    {% if is_granted('ROLE_USER') %}
+        <h1>Welcome {{ app.user.username }}!</h1>
+    {% else %}
+        <h1>Welcome to WOT Explorer site!</h1>
+        <h2>This site is owned by clans: {{ authorised_clans }}.</h2>
+        <p>If you are not a member of that clans you will not be able to freely browse its content.</p>
+        <p>If you are a member, please login using your WOT account. Enjoy!</p>
+    {% endif %}
+{% endblock %}
