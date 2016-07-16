@@ -5,9 +5,12 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\PayoutConfig;
+use AppBundle\Form\Type\PayoutConfigType;
 use AppBundle\Utils\WotManipulator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -16,14 +19,13 @@ use Symfony\Component\Routing\Annotation\Route;
  * @Route(path="/cwadmin")
  * @Security("has_role('ROLE_ADMIN')")
  */
-class CwAdminController extends Controller
+class CwAdminController extends BaseController
 {
 
     /**
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws \Exception
      * @Route(path="/refreshclans", name="refresh_clans")
-     *
      */
     public function refreshClansAction()
     {
@@ -35,7 +37,7 @@ class CwAdminController extends Controller
         {
             throw new \Exception('Failed refreshing clans. Contact admin to solve the issue.');
         }
-        $this->addFlash('success', 'Clans refreshed');
+        $this->addFlash('success', 'All clans refreshed!');
         return $this->redirectToRoute('homepage');
     }
 
@@ -54,7 +56,7 @@ class CwAdminController extends Controller
         {
             throw new \Exception('Failed refreshing maps. Contact admin to solve the issue.');
         }
-        $this->addFlash('success', 'Maps refreshed');
+        $this->addFlash('success', 'Maps refreshed!');
         return $this->redirectToRoute('homepage');
     }
 
@@ -73,7 +75,39 @@ class CwAdminController extends Controller
         {
             throw new \Exception('Failed refreshing tanks. Contact admin to solve the issue.');
         }
-        $this->addFlash('success', 'Tanks refreshed');
+        $this->addFlash('success', 'Tanks refreshed!');
         return $this->redirectToRoute('homepage');
+    }
+
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @Route(path="/editpayoutconfig", name="edit_payout_config")
+     */
+    public function editPayoutConfig(Request $request)
+    {
+        $config = $this->getEntityManager()->getRepository('AppBundle:PayoutConfig')->find(1);
+        if (null === $config)
+            $config = new PayoutConfig();
+
+        $form = $this->createForm(PayoutConfigType::class, $config);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() and $form->isValid())
+        {
+            $this->getEntityManager()->persist($config);
+            $this->getEntityManager()->flush();
+
+            $this->addFlash('success', 'Payout config saved!');
+            return $this->redirectToRoute('homepage');
+        }
+
+        return $this->render('cwtracker/editPayoutConfig.html.twig', array(
+            'form' => $form->createView(),
+            'panel' => array(
+                'title' => 'Payout config',
+                'small_title' => 'edit payout settings',
+            ),
+        ));
     }
 }

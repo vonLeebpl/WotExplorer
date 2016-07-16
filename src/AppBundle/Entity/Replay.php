@@ -203,7 +203,7 @@ class Replay
         if ($this->getReplayFile()->getClientOriginalExtension() !== 'wotreplay')
         {
             $context->buildViolation('This is not wotreplay file!')
-            ->addViolation();
+                ->addViolation();
             return;
         }
         $filename = $this->getReplayFile()->getRealPath();
@@ -220,7 +220,6 @@ class Replay
             }
             fclose($fp);
         }
-
     }
 
     /**
@@ -230,7 +229,7 @@ class Replay
      *
      * @return Replay
      */
-    public function setPlayerName($playerName)
+    private function setPlayerName($playerName)
     {
         $this->playerName = $playerName;
 

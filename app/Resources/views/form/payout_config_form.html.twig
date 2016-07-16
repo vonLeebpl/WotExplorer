@@ -1,0 +1,27 @@
+{% extends 'common/panel.html.twig' %}
+
+{% block panel_content %}
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+<h3>Global gold split rules in percent. <small>Below three need to sum up to 100!</small></h3>
+    {{ form_row(form.percentCw, {'label': 'Clan Wars part in %:'}) }}
+    {{ form_row(form.percentSh, {'label': 'Stronghold part in %:'}) }}
+    {{ form_row(form.percentHqBonus, {'label': 'Headquarter members part in %:'}) }}
+<h3>Points for commander and players in Clan War battles.</h3>
+    {{ form_row(form.ptsCommanderWin, {'label': 'Points for Commander when win:'}) }}
+    {{ form_row(form.ptsCommanderDraw, {'label': 'Points for Commander when draw:'}) }}
+    {{ form_row(form.ptsCommanderLost, {'label': 'Points for Commander when lost:'}) }}
+    {{ form_row(form.ptsPlayerWon, {'label': 'Points for player when win:'}) }}
+    {{ form_row(form.ptsPlayerDraw, {'label': 'Points for player when draw:'}) }}
+    {{ form_row(form.ptsPlayerLost, {'label': 'Points for player when lost:'}) }}
+<h3>Recruit and Reservist factors in Clan War battles. <small>They will receive fraction of regular soldier points.</small></h3>
+    {{ form_row(form.recruitFactor, {'label': 'Recruit factor (100 means no penalty) in %:'}) }}
+    {{ form_row(form.reservistFactor, {'label': 'Reservist factor (100 means no penalty) in %:'}) }}
+<h3>Stronghold battles settings. <small>Player with less then minimum will not be part of gold for stronghold calculation.</small></h3>
+    {{ form_row(form.minResourceToBePaid, {'label': 'Required min resourced earned per player:'}) }}
+    {{ form_row(form.minResourceToBeExtraPaid, {'label': 'Minimum resource to be extra paid for stronghold:'}) }}
+    {{ form_row(form.percentExtraShare, {'label': 'Percent of stronghold split to be assigned to extra pay:'}) }}
+    {{ form_end(form) }}
+
+{% endblock %}
