@@ -20,4 +20,27 @@ class PlayerRepository extends EntityRepository
 
         return $query->getResult();
     }
+
+    public function findAllClanMembersBetweenMinAndExtraResourceEarned( $clan, $minRes, $extraRes  )
+    {
+        $query = $this->createQueryBuilder('p')
+            ->andWhere('p.clan = (:clan)')
+            ->andWhere('p.resourcesToPayout >= :minRes')
+            ->andWhere('p.resourcesToPayout < :extraRes')
+            ->setParameters(['clan' => $clan, 'minRes' => $minRes, 'extraRes' => $extraRes])
+            ->getQuery();
+
+        return $query->getResult();
+    }
+
+    public function findAllClanMembersWithExtraResourceEarned( $clan, $extraRes  )
+    {
+        $query = $this->createQueryBuilder('p')
+            ->andWhere('p.clan = (:clan)')
+            ->andWhere('p.resourcesToPayout >= :extraRes')
+            ->setParameters(['clan' => $clan, 'extraRes' => $extraRes])
+            ->getQuery();
+
+        return $query->getResult();
+    }
 }

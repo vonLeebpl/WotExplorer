@@ -40,3 +40,7 @@ services:
   app.datatables.battle_datatable:
     class: AppBundle\Datatables\BattleDatatable
     parent: sg_datatables.datatable.abstract
+
+  app.utils.payout_manipulator:
+    class: AppBundle\Utils\PayoutManipulator
+    arguments: ['@doctrine.orm.entity_manager']

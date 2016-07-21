@@ -69,7 +69,7 @@ class WotManipulator
         $battle->setCreatedAt(new \DateTime());
 
         $replay->setBattle($battle);
-        $replay->setPlayerName($results['battle']['playerName']);
+        //$replay->setPlayerName($results['battle']['playerName']);
 
         $player = $this->entityManager->getRepository('AppBundle:Player')
             ->findOneByUsername($results['battle']['playerName']);

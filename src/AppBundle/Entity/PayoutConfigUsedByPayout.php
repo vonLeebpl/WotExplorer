@@ -6,8 +6,8 @@
 /**
  * Created by PhpStorm.
  * User: JPa
- * Date: 2016-07-16
- * Time: 16:19
+ * Date: 2016-07-18
+ * Time: 18:58
  */
 
 namespace AppBundle\Entity;
@@ -19,9 +19,9 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="payout_config")
+ * @ORM\Table(name="payout_config_used_by_payout")
  */
-class PayoutConfig
+class PayoutConfigUsedByPayout
 {
     /**
      * @ORM\Id
@@ -29,6 +29,12 @@ class PayoutConfig
      * @ORM\Column(type="integer")
      */
     private $id;
+
+    /**
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Payout", inversedBy="config")
+     * @ORM\JoinColumn(name="payout_id", referencedColumnName="id")
+     */
+    private $payout;
 
     /**
      * @ORM\Column(type="smallint")
@@ -217,6 +223,27 @@ class PayoutConfig
      */
     private $reservistFactor = 0;
 
+    /**
+     * @Assert\Callback
+     * @param ExecutionContextInterface $context
+     * @param $payload
+     */
+    public function validate(ExecutionContextInterface $context, $payload)
+    {
+        // check if global split variables sum to 100%
+        if ($this->percentCw + $this->percentSh + $this->percentHqBonus != 1)
+        {
+            $context->buildViolation('Global gold split percents need to sum up to 100!')
+                ->addViolation();
+            return;
+        }
+        if ($this->minResourceToBeExtraPaid < $this->minResourceToBePaid)
+        {
+            $context->buildViolation('Minimum extra resource can not be less than minimum resource to be paid!')
+                ->addViolation();
+            return;
+        }
+    }
 
     /**
      * Get id
@@ -233,7 +260,7 @@ class PayoutConfig
      *
      * @param integer $ptsCommanderWin
      *
-     * @return PayoutConfig
+     * @return PayoutConfigUsedByPayout
      */
     public function setPtsCommanderWin($ptsCommanderWin)
     {
@@ -257,7 +284,7 @@ class PayoutConfig
      *
      * @param integer $ptsCommanderDraw
      *
-     * @return PayoutConfig
+     * @return PayoutConfigUsedByPayout
      */
     public function setPtsCommanderDraw($ptsCommanderDraw)
     {
@@ -281,7 +308,7 @@ class PayoutConfig
      *
      * @param integer $ptsCommanderLost
      *
-     * @return PayoutConfig
+     * @return PayoutConfigUsedByPayout
      */
     public function setPtsCommanderLost($ptsCommanderLost)
     {
@@ -305,7 +332,7 @@ class PayoutConfig
      *
      * @param integer $ptsPlayerWin
      *
-     * @return PayoutConfig
+     * @return PayoutConfigUsedByPayout
      */
     public function setPtsPlayerWin($ptsPlayerWin)
     {
@@ -329,7 +356,7 @@ class PayoutConfig
      *
      * @param integer $ptsPlayerDraw
      *
-     * @return PayoutConfig
+     * @return PayoutConfigUsedByPayout
      */
     public function setPtsPlayerDraw($ptsPlayerDraw)
     {
@@ -353,7 +380,7 @@ class PayoutConfig
      *
      * @param integer $ptsPlayerLost
      *
-     * @return PayoutConfig
+     * @return PayoutConfigUsedByPayout
      */
     public function setPtsPlayerLost($ptsPlayerLost)
     {
@@ -377,7 +404,7 @@ class PayoutConfig
      *
      * @param integer $minResourceToBePaid
      *
-     * @return PayoutConfig
+     * @return PayoutConfigUsedByPayout
      */
     public function setMinResourceToBePaid($minResourceToBePaid)
     {
@@ -401,7 +428,7 @@ class PayoutConfig
      *
      * @param integer $minResourceToBeExtraPaid
      *
-     * @return PayoutConfig
+     * @return PayoutConfigUsedByPayout
      */
     public function setMinResourceToBeExtraPaid($minResourceToBeExtraPaid)
     {
@@ -423,9 +450,9 @@ class PayoutConfig
     /**
      * Set percentCw
      *
-     * @param integer $percentCw
+     * @param string $percentCw
      *
-     * @return PayoutConfig
+     * @return PayoutConfigUsedByPayout
      */
     public function setPercentCw($percentCw)
     {
@@ -437,7 +464,7 @@ class PayoutConfig
     /**
      * Get percentCw
      *
-     * @return integer
+     * @return string
      */
     public function getPercentCw()
     {
@@ -447,9 +474,9 @@ class PayoutConfig
     /**
      * Set percentSh
      *
-     * @param integer $percentSh
+     * @param string $percentSh
      *
-     * @return PayoutConfig
+     * @return PayoutConfigUsedByPayout
      */
     public function setPercentSh($percentSh)
     {
@@ -461,7 +488,7 @@ class PayoutConfig
     /**
      * Get percentSh
      *
-     * @return integer
+     * @return string
      */
     public function getPercentSh()
     {
@@ -471,9 +498,9 @@ class PayoutConfig
     /**
      * Set percentHqBonus
      *
-     * @param integer $percentHqBonus
+     * @param string $percentHqBonus
      *
-     * @return PayoutConfig
+     * @return PayoutConfigUsedByPayout
      */
     public function setPercentHqBonus($percentHqBonus)
     {
@@ -485,7 +512,7 @@ class PayoutConfig
     /**
      * Get percentHqBonus
      *
-     * @return integer
+     * @return string
      */
     public function getPercentHqBonus()
     {
@@ -495,9 +522,9 @@ class PayoutConfig
     /**
      * Set percentExtraShare
      *
-     * @param integer $percentExtraShare
+     * @param string $percentExtraShare
      *
-     * @return PayoutConfig
+     * @return PayoutConfigUsedByPayout
      */
     public function setPercentExtraShare($percentExtraShare)
     {
@@ -509,7 +536,7 @@ class PayoutConfig
     /**
      * Get percentExtraShare
      *
-     * @return integer
+     * @return string
      */
     public function getPercentExtraShare()
     {
@@ -519,9 +546,9 @@ class PayoutConfig
     /**
      * Set recruitFactor
      *
-     * @param integer $recruitFactor
+     * @param string $recruitFactor
      *
-     * @return PayoutConfig
+     * @return PayoutConfigUsedByPayout
      */
     public function setRecruitFactor($recruitFactor)
     {
@@ -533,7 +560,7 @@ class PayoutConfig
     /**
      * Get recruitFactor
      *
-     * @return integer
+     * @return string
      */
     public function getRecruitFactor()
     {
@@ -543,9 +570,9 @@ class PayoutConfig
     /**
      * Set reservistFactor
      *
-     * @param integer $reservistFactor
+     * @param string $reservistFactor
      *
-     * @return PayoutConfig
+     * @return PayoutConfigUsedByPayout
      */
     public function setReservistFactor($reservistFactor)
     {
@@ -557,7 +584,7 @@ class PayoutConfig
     /**
      * Get reservistFactor
      *
-     * @return integer
+     * @return string
      */
     public function getReservistFactor()
     {
@@ -565,24 +592,26 @@ class PayoutConfig
     }
 
     /**
-     * @Assert\Callback
-     * @param ExecutionContextInterface $context
-     * @param $payload
+     * Set payout
+     *
+     * @param \AppBundle\Entity\Payout $payout
+     *
+     * @return PayoutConfigUsedByPayout
      */
-    public function validate(ExecutionContextInterface $context, $payload)
+    public function setPayout(Payout $payout = null)
     {
-        // check if global split variables sum to 100%
-        if ($this->getPercentCw() + $this->getPercentSh() + $this->getPercentHqBonus() != 1)
-        {
-            $context->buildViolation('Global gold split percents need to sum up to 100!')
-                ->addViolation();
-            return;
-        }
-        if ($this->getMinResourceToBeExtraPaid() < $this->getMinResourceToBePaid())
-        {
-            $context->buildViolation('Minimum extra resource can not be less than minimum resource to be paid!')
-                ->addViolation();
-            return;
-        }
+        $this->payout = $payout;
+
+        return $this;
+    }
+
+    /**
+     * Get payout
+     *
+     * @return \AppBundle\Entity\Payout
+     */
+    public function getPayout()
+    {
+        return $this->payout;
     }
 }
