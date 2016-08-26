@@ -33,12 +33,12 @@ class Event
      * @ORM\Column(type="datetime")
      *
      */
-    protected $start;
+    protected $startAt;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    protected $end;
+    protected $endAt;
 
     /**
      * @ORM\Column(type="string")
@@ -46,7 +46,7 @@ class Event
     protected $status;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="array", nullable=true)
      */
     protected $fronts;
 
@@ -103,9 +103,9 @@ class Event
      * @param \DateTime $start
      * @return Event
      */
-    public function setStart($start)
+    public function setStartAt($start)
     {
-        $this->start = $start;
+        $this->startAt = $start;
 
         return $this;
     }
@@ -115,9 +115,9 @@ class Event
      *
      * @return \DateTime 
      */
-    public function getStart()
+    public function getStartAt()
     {
-        return $this->start;
+        return $this->startAt;
     }
 
     /**
@@ -126,9 +126,9 @@ class Event
      * @param \DateTime $end
      * @return Event
      */
-    public function setEnd($end)
+    public function setEndAt($end)
     {
-        $this->end = $end;
+        $this->endAt = $end;
 
         return $this;
     }
@@ -138,9 +138,9 @@ class Event
      *
      * @return \DateTime 
      */
-    public function getEnd()
+    public function getEndAt()
     {
-        return $this->end;
+        return $this->endAt;
     }
 
     /**
@@ -198,13 +198,13 @@ class Event
         $this->setId($event['event_id']);
         $this->setEventName($event['event_name']);
         $this->setStatus($event['status']);
-        $this->setStart(new \DateTime($event['start']));
-        $this->setEnd(new \DateTime($event['end']));
+        $this->setStartAt(new \DateTime($event['start']));
+        $this->setEndAt(new \DateTime($event['end']));
         $fr= [];
         foreach($event['fronts'] as $front)
         {
             $fr[] = $front['front_id'];
         }
-        $this->setFronts((string)(implode(',',$fr)));
+        $this->setFronts($fr);
     }
 }

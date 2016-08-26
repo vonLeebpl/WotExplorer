@@ -16,6 +16,8 @@ use AppBundle\Entity\Battle;
 use AppBundle\Entity\BattleAttendance;
 use AppBundle\Entity\BattleEnemyAttendance;
 use AppBundle\Entity\Clan;
+use AppBundle\Entity\Event;
+use AppBundle\Entity\EventAccountData;
 use AppBundle\Entity\Map;
 use AppBundle\Entity\Player;
 use AppBundle\Entity\RefreshMonitor;
@@ -420,12 +422,13 @@ class WotManipulator
     }
 
     /**
-     * A method thet uses deprecated method for tanks API refresh
+     * A method that uses deprecated method for tanks API refresh
      */
     public function refreshWotOldTanks()
     {
         $rep = $this->entityManager->getRepository('AppBundle:Tank');
         $data = $this->wrapper->getVehicles();
+        
         foreach ($data as $vehicle)
         {
             //$compDescr = $this->calcCompDescr($vehicle);
@@ -449,6 +452,52 @@ class WotManipulator
             }
         }
 
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Refreshes events in db from WOT API
+     */
+    public function refreshEvents()
+    {
+        $rep = $this->entityManager->getRepository('AppBundle:Event');
+        $data = $this->wrapper->getEvents();
+        
+        foreach ($data as $event)
+        {
+            $e = $rep->findOneById($event['event_id']);
+            if (!$e) $e = new Event();
+
+            $e->parseFromArray($event);
+            $this->entityManager->persist($e);
+        }
+
+        $this->entityManager->flush();
+    }
+
+    public function refreshClanEventData(Clan $clan, Event $event)
+    {
+        // delete old data
+        $rep = $this->entityManager->getRepository('AppBundle:EventAccountData');
+        $rep->deleteClanEventData($clan->getId(), $event->getId());
+
+        $event_id = $event->getId();
+        $front_id = $event->getFronts()[0];
+        
+        foreach ($clan->getMembersIds() as $account_id)
+        {
+            //call WOT API
+            $accountName = $this->entityManager->getRepository('AppBundle:Player')->findOneByAccountId($account_id)->getUsername();
+            $data = $this->wrapper->getEventAccountInfo($account_id, $event_id, $front_id);
+            //var_dump($data[$account_id]['events'][$event_id]);
+            $eai = new EventAccountData();
+            $eai->setAccountName($accountName);
+            $eai->setClan($clan);
+            $eai->parseFromArray($data[$account_id]['events'][$event_id]);
+            
+            $this->entityManager->persist($eai);
+        }
+        
         $this->entityManager->flush();
     }
 

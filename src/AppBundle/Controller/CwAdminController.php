@@ -25,6 +25,24 @@ class CwAdminController extends BaseController
     /**
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws \Exception
+     * @Route(path="/refreshevents", name="refresh_events")
+     */
+    public function refreshEventsAction()
+    {
+        $wot_man = $this->container->get('app.utils.wot_manipulator');
+        try {
+            $wot_man->refreshEvents();
+        }
+        catch (\Exception $e)
+        {
+            throw new \Exception('Failed refreshing events. Contact admin to solve the issue.');
+        }
+        $this->addFlash('success', 'All events refreshed!');
+        return $this->redirectToRoute('homepage');
+    }
+    /**
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Exception
      * @Route(path="/refreshclans", name="refresh_clans")
      */
     public function refreshClansAction()

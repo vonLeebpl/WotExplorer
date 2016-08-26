@@ -39,10 +39,11 @@ class Battle
 
     /**
      * @var ArrayCollection
-     *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\BattleAttendance", mappedBy="battle", cascade={"remove"})
      */
     private $battleAttendances;
+
+    private $payoutBattles;
 
     /**
      * @var ArrayCollection

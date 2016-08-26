@@ -47,11 +47,6 @@ class EventAccountData
      */
     private $accountName;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Assert\DateTime()
-     */
-    private $joined_at;
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -76,6 +71,11 @@ class EventAccountData
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
+    private $fame_points_since_turn;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
     private $fame_points_to_improve_award;
 
     /**
@@ -83,18 +83,12 @@ class EventAccountData
      */
     private $rank;
 
-    private $days_in_clan;
-
-
-
-    /*
-     * get days_in_clan
+    /**
+     * @ORM\Column(type="integer", nullable=true)
      */
-    public function getDaysInClan()
-    {
-        $t = new \DateTime('now');
-        return $t->diff($this->getJoinedAt())->format('%a');
-    }
+    private $rank_delta;
+
+
 
     /**
      * Get id
@@ -175,28 +169,6 @@ class EventAccountData
         return $this->accountName;
     }
 
-    /**
-     * Set joined_at
-     *
-     * @param \DateTime $joinedAt
-     * @return EventAccountData
-     */
-    public function setJoinedAt($joinedAt)
-    {
-        $this->joined_at = $joinedAt;
-
-        return $this;
-    }
-
-    /**
-     * Get joined_at
-     *
-     * @return \DateTime 
-     */
-    public function getJoinedAt()
-    {
-        return $this->joined_at;
-    }
 
     /**
      * Set award_level
@@ -342,7 +314,7 @@ class EventAccountData
      * @param \AppBundle\Entity\Clan $clan
      * @return EventAccountData
      */
-    public function setClan(\AppBundle\Entity\Clan $clan = null)
+    public function setClan(Clan $clan = null)
     {
         $this->clan = $clan;
 
@@ -357,5 +329,71 @@ class EventAccountData
     public function getClan()
     {
         return $this->clan;
+    }
+
+    /**
+     * Set famePointsSinceTurn
+     *
+     * @param integer $famePointsSinceTurn
+     *
+     * @return EventAccountData
+     */
+    public function setFamePointsSinceTurn($famePointsSinceTurn)
+    {
+        $this->fame_points_since_turn = $famePointsSinceTurn;
+
+        return $this;
+    }
+
+    /**
+     * Get famePointsSinceTurn
+     *
+     * @return integer
+     */
+    public function getFamePointsSinceTurn()
+    {
+        return $this->fame_points_since_turn;
+    }
+
+    /**
+     * Set rankDelta
+     *
+     * @param integer $rankDelta
+     *
+     * @return EventAccountData
+     */
+    public function setRankDelta($rankDelta)
+    {
+        $this->rank_delta = $rankDelta;
+
+        return $this;
+    }
+
+    /**
+     * Get rankDelta
+     *
+     * @return integer
+     */
+    public function getRankDelta()
+    {
+        return $this->rank_delta;
+    }
+
+    public function parseFromArray($m)
+    {
+        //$this->setEvent(key($m));
+        $m = $m[0];
+        $this->setAwardLevel($m['award_level']);
+        $this->setBattles($m['battles']);
+        $this->setRank($m['rank']);
+        $this->setBattlesToAward($m['battles_to_award']);
+        $this->setFamePointsToImproveAward($m['fame_points_to_improve_award']);
+        $this->setFamePoints($m['fame_points']);
+        $this->setFamePointsSinceTurn($m['fame_points_since_turn']);
+        $this->setRankDelta($m['rank_delta']);
+        $this->setEvent($m['event_id']);
+        $this->setAccountId($m['account_id']);
+        
+        return $this;
     }
 }

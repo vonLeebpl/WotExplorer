@@ -23,8 +23,41 @@ class WotApiWrapper
         'vehicles' => ['fields', 'tank_id', 'nation', 'type', 'tier'],
         'clan_details' => ['clan_id', 'fields', 'access_token', 'extra', 'members_key'],
         'stronghold_stats' => ['account_id', 'fields', 'access_token'],
+        'event' => ['event_id', 'fields', 'limit', 'page_no', 'status'],
+        'event_account_info' => ['account_id', 'event_id', 'front_id', 'fields'],
     ];
 
+    /**
+     * @param integer $account_id
+     * @param string $event_id
+     * @param string $front_id
+     * @param null|array|string $fields
+     * @return array
+     */
+    public function getEventAccountInfo($account_id, $event_id, $front_id, $fields = null)
+    {
+        $call_params = $this->buildCallParams('event_account_info', $account_id, $event_id, $front_id, $fields);
+        $call = new WotApiWotGlobalMap();
+
+        return $call->getEventAccountInfo($call_params);
+    }
+
+    /**
+     * @param null $event_id
+     * @param null|array|string $fields
+     * @param int $limit
+     * @param int $page_no
+     * @param null $status ['PLANNED', 'ACTIVE', 'FINISHED']
+     * @return array
+     */
+    public function getEvents($event_id = null, $fields = null, $limit = 5, $page_no = 1, $status = null)
+    {
+        $call_params = $this->buildCallParams('event', $event_id, $fields, $limit, $page_no, $status);
+        $call = new WotApiWotGlobalMap();
+
+        return $call->getEvents($call_params);
+    }
+    
     /**
      * @param array|int $account_id
      * @param null|array|string $fields

@@ -48,6 +48,12 @@ class Payout
     private $payoutToPlayers;
 
     /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\PayoutBattle", mappedBy="payout", cascade={"remove"})
+     */
+    private $payoutBattles;
+
+    /**
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
      */
@@ -96,6 +102,7 @@ class Payout
     public function __construct()
     {
         $this->payoutToPlayers = new ArrayCollection();
+        $this->payoutBattles = new  ArrayCollection();
     }
 
     /**
@@ -356,5 +363,39 @@ class Payout
     public function getClan()
     {
         return $this->clan;
+    }
+
+    /**
+     * Add payoutBattle
+     *
+     * @param \AppBundle\Entity\PayoutBattle $payoutBattle
+     *
+     * @return Payout
+     */
+    public function addPayoutBattle(\AppBundle\Entity\PayoutBattle $payoutBattle)
+    {
+        $this->payoutBattles[] = $payoutBattle;
+
+        return $this;
+    }
+
+    /**
+     * Remove payoutBattle
+     *
+     * @param \AppBundle\Entity\PayoutBattle $payoutBattle
+     */
+    public function removePayoutBattle(\AppBundle\Entity\PayoutBattle $payoutBattle)
+    {
+        $this->payoutBattles->removeElement($payoutBattle);
+    }
+
+    /**
+     * Get payoutBattles
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPayoutBattles()
+    {
+        return $this->payoutBattles;
     }
 }

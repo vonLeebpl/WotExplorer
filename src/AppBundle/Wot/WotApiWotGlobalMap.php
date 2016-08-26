@@ -30,7 +30,7 @@ class WotApiWotGlobalMap extends WotApiCall
         limit 	numeric
         status 	string 'FINISHED | ACTIVE | PLANNED'
      * @link http://eu.wargaming.net/developers/api_reference/wot/globalmap/events/
-     * @return events listed
+     * @return array
      *
      */
     public function getEvents($call_params = null)

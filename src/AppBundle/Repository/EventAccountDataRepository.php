@@ -2,7 +2,6 @@
 
 namespace AppBundle\Repository;
 
-use AppBundle\Entity\EventAccountData;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -13,40 +12,24 @@ use Doctrine\ORM\EntityRepository;
  */
 class EventAccountDataRepository extends EntityRepository
 {
-    /*
-     * parses $mdata to add them as collection to $clan
+
+    /**
+     * @param integer $clan_id
+     * @param string $event_id
+     * @return mixed
      */
-    public function setClanMembersFromArray(&$clan, $mdata)
+    public function deleteClanEventData($clan_id, $event_id)
     {
-        if (count($mdata))
-        {
-            foreach($mdata as $m)
-            {
-                $ad = new EventAccountData();
-                $ad->setAccountId($m['account_id']);
-                $ad->setAccountName($m['account_name']);
-                $d = new \DateTime();
-                $d->setTimestamp($m['joined_at']);
-                $ad->setJoinedAt($d);
-                $ad->setClan($clan);
+        $query = $this->getEntityManager()
+            ->createQuery(
+            'DELETE AppBundle:EventAccountData u
+            WHERE u.clan = :clan
+            AND u.event = :event')
+            ->setParameter("clan", $clan_id)
+            ->setParameter("event", $event_id);
 
-                $clan->addMember($ad);
-            }
-        }
+        return $query->execute();
     }
 
-    /*
- * parses $eventinfo to fields
- */
-    public function setEventDataFromArray(&$ad, $m)
-    {
-        $ad->setEvent(key($m));
-        $m = $m[key($m)][0];
-        $ad->setAwardLevel($m['award_level']);
-        $ad->setBattles($m['battles']);
-        $ad->setRank($m['rank']);
-        $ad->setBattlesToAward($m['battles_to_award']);
-        $ad->setFamePointsToImproveAward($m['fame_points_to_improve_award']);
-        $ad->setFamePoints($m['fame_points']);
-    }
+
 }

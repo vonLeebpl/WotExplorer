@@ -1,0 +1,50 @@
+{% extends 'clean.html.twig' %}
+
+{% block content %}
+    <div class="container">
+        <h2>{{ clan.tag }} clan members progress in {{ event.eventName }}</h2>
+
+        {% if mdata|length > 0 %}
+
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Name</th>
+                        <th>Award</th>
+                        <th>Rank</th>
+                        <th>Fame</th>
+                        <th>Fame to award</th>
+                        <th>Battles</th>
+                        <th>Battles to award</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set cnt = 0 %}
+                    {% for m in mdata %}
+                        {% set cnt = cnt + 1 %}
+                        <tr     {% if m.rank <= 5000 and m.rank > 0 %}
+                                    class="success"
+                                {% elseif m.rank > 5000 and m.rank <= 7000 %}
+                                    class="info"
+                                {% elseif m.rank > 7000 %} class="danger"
+                                {% else %} class="danger" {% endif %}
+                        >
+                            <td>{{ cnt }}</td>
+                            <td>{{ m.accountName }}</td>
+                            <td>{{ m.awardLevel }}</td>
+                            <td>{{ m.rank }}</td>
+                            <td>{{ m.famePoints }}</td>
+                            <td>{{ m.famePointsToImproveAward }}</td>
+                            <td>{{ m.battles }}</td>
+                            <td>{{ m.battlesToAward }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <h3>Sorry, no matches!!</h3>
+        {% endif %}
+    </div>
+
+{% endblock %}
